@@ -1,10 +1,15 @@
-package com.mosippe.ussd_api.DTO;
+package com.mosippe.ussd_api.Entities;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
 
 @Data
-public class SessionDTO {
+@Entity
+public class UssdSession implements Serializable {
+
     @Id
     private String id;
     private String sessionId;

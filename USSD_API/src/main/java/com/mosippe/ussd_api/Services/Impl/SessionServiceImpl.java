@@ -1,28 +1,30 @@
 package com.mosippe.ussd_api.Services.Impl;
 
-import com.mosippe.ussd_api.DTO.SessionDTO;
+import com.mosippe.ussd_api.Entities.UssdSession;
 import com.mosippe.ussd_api.Repositories.SessionRepository;
 import com.mosippe.ussd_api.Services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SessionServiceImpl implements SessionService {
     @Autowired
     private SessionRepository sessionRepository;
     @Override
-    public SessionDTO createUssdSession(SessionDTO sessionDTO) {
-        return sessionRepository.save(sessionDTO);
+    public UssdSession createUssdSession(UssdSession ussdSession) {
+        return sessionRepository.save(ussdSession);
     }
 
     @Override
-    public SessionDTO getSession(String id) {
+    public UssdSession getSession(String id) {
         return sessionRepository.findById(id).orElse(null);
     }
 
     @Override
-    public SessionDTO updateSession(SessionDTO newSessionDTO) {
-        if(sessionRepository.existsById(newSessionDTO.getId()))
+    public UssdSession updateSession(UssdSession newUssdSession) {
+        if(sessionRepository.existsById(newUssdSession.getId()))
         {
-            return sessionRepository.save(newSessionDTO);
+            return sessionRepository.save(newUssdSession);
         }
         throw new IllegalArgumentException("Invalid Id for session");
     }

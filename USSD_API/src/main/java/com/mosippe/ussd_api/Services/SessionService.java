@@ -1,10 +1,10 @@
 package com.mosippe.ussd_api.Services;
 
-import com.mosippe.ussd_api.DTO.SessionDTO;
+import com.mosippe.ussd_api.Entities.UssdSession;
 
 public interface SessionService {
-    SessionDTO createUssdSession(SessionDTO sessionDTO);
-    SessionDTO getSession(String id);
-    SessionDTO updateSession(SessionDTO newSessionDTO);
+    UssdSession createUssdSession(UssdSession ussdSession);
+    UssdSession getSession(String id);
+    UssdSession updateSession(UssdSession newUssdSession);
     void deleteSession(String id);
 }
