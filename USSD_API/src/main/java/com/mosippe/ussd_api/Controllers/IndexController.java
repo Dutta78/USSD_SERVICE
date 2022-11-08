@@ -14,6 +14,6 @@ public class IndexController {
     }
     @PostMapping("")
     public String test1(){
-        return "Hello there! This is post method";
+        return "CON Hello there! This is post method";
     }
 }
