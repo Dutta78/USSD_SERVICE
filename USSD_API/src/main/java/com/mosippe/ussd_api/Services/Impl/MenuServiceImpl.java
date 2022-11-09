@@ -7,13 +7,14 @@ import com.mosippe.ussd_api.Services.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
-
+@Service
 public class MenuServiceImpl implements MenuService {
     @Autowired
     ResourceLoader resourceLoader;
