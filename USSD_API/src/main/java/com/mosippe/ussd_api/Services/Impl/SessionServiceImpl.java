@@ -22,7 +22,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public UssdSession updateSession(UssdSession newUssdSession) {
-        if(sessionRepository.existsById(newUssdSession.getId()))
+        if(sessionRepository.existsById(newUssdSession.getSessionId()))
         {
             return sessionRepository.save(newUssdSession);
         }

@@ -11,7 +11,6 @@ import java.io.Serializable;
 public class UssdSession implements Serializable {
 
     @Id
-    private String id;
     private String sessionId;
     private String serviceCode;
     private String phoneNumber;
