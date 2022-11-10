@@ -2,7 +2,10 @@ package com.mosippe.ussd_api.Services.Impl;
 
 import com.mosippe.ussd_api.Entities.Menu;
 import com.mosippe.ussd_api.Entities.MenuOption;
+import com.mosippe.ussd_api.Entities.UserData;
 import com.mosippe.ussd_api.Entities.UssdSession;
+import com.mosippe.ussd_api.Repositories.UserRepository;
+import com.mosippe.ussd_api.Repositories.UssdSessionRepository;
 import com.mosippe.ussd_api.Services.MenuService;
 import com.mosippe.ussd_api.Services.SessionService;
 import com.mosippe.ussd_api.Services.UssdRoutingService;
@@ -19,6 +22,10 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
     private MenuService menuService;
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private UssdSessionRepository ussdSessionRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Override
     public String menuLevelRouter(String sessionId, String serviceCode, String phoneNumber, String text) throws IOException {
         Map<String, Menu> menus = menuService.loadMenus();
@@ -26,6 +33,7 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
         /**
          * Check if response has some value
          */
+        System.out.println(text);
         return text.length() > 0 ? getNextMenuItem(session, menus) : menus.get(session.getCurrentMenuLevel()).getText();
     }
 
@@ -52,7 +60,7 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
     public String processMenuOption(UssdSession session, MenuOption menuOption) throws IOException {
         switch (menuOption.getType()) {
             case "response":
-                return processMenuOptionResponses(menuOption);
+                return processMenuOptionResponses(session, menuOption);
             case "level":
                 updateSessionMenuLevel(session, menuOption.getNextMenuLevel());
                 return getMenu(menuOption.getNextMenuLevel());
@@ -62,10 +70,11 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
     }
 
     @Override
-    public String processMenuOptionResponses(MenuOption menuOption) {
+    public String processMenuOptionResponses(UssdSession session, MenuOption menuOption) {
             String response = menuOption.getResponse();
             Map<String, String> variablesMap = new HashMap<>();
-
+            UssdSession ussdSession = this.ussdSessionRepository.findBySessionId(session.getSessionId());
+            UserData userData = userRepository.findByPhoneNo(ussdSession.getPhoneNumber());
             switch (menuOption.getAction()) {
                 case PROCESS_ACC_BALANCE:
                     variablesMap.put("account_balance", "10000");
@@ -74,8 +83,10 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
                     variablesMap.put("account_number", "123412512");
                     break;
                 case PROCESS_ACC_PHONE_NUMBER:
-                    variablesMap.put("phone_number", "254702759950");
+                    variablesMap.put("phone_number", ussdSession.getPhoneNumber());
                     break;
+                case PROCESS_ACC_AADHAR:
+                    variablesMap.put("aadhar_number", userData.getAadharNo());
             }
 
             response = replaceVariable(variablesMap, response);

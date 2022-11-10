@@ -2,13 +2,13 @@
   "1": {
     "id": 230,
     "menu_level": 1,
-    "text": "CON What would you like to check\n1. My account\n2. My phone number",
+    "text": "CON What would you like to check\n1. Aadhar number\n2. My phone number",
     "menu_options": [
       {
-        "type": "level",
-        "response": null,
-        "next_menu_level": 2,
-        "action": null
+        "type": "response",
+        "response": "END Your Aadhar no. is ${aadhar_number}",
+        "next_menu_level": null,
+        "action": "PROCESS_ACC_AADHAR"
       },
       {
         "type": "response",
