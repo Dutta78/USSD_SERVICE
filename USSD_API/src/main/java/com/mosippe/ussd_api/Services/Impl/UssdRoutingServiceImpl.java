@@ -8,6 +8,7 @@ import com.mosippe.ussd_api.Repositories.UserRepository;
 import com.mosippe.ussd_api.Repositories.UssdSessionRepository;
 import com.mosippe.ussd_api.Services.MenuService;
 import com.mosippe.ussd_api.Services.SessionService;
+import com.mosippe.ussd_api.Services.UserService;
 import com.mosippe.ussd_api.Services.UssdRoutingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
     private UssdSessionRepository ussdSessionRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
     @Override
     public String menuLevelRouter(String sessionId, String serviceCode, String phoneNumber, String text) throws IOException {
         Map<String, Menu> menus = menuService.loadMenus();
@@ -33,16 +36,30 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
         /**
          * Check if response has some value
          */
-        System.out.println(text);
+        System.out.println(text.length());
         return text.length() > 0 ? getNextMenuItem(session, menus) : menus.get(session.getCurrentMenuLevel()).getText();
     }
 
     @Override
     public String getNextMenuItem(UssdSession session, Map<String, Menu> menus) throws IOException {
-        String[] levels = session.getText().split("\\*");
-        String lastValue = levels[levels.length - 1];
+        String lastValue = splitAndGetLastInput(session);
         Menu menuLevel = menus.get(session.getCurrentMenuLevel());
 
+        if(lastValue.length() == 12)
+        {
+            MenuOption menuOption = menuLevel.getMenuOptions().get(0);
+            return processMenuOption(session, menuOption);
+        }
+        if(lastValue.length() == 4)
+        {
+            if(userService.validatePin(lastValue,session.getPhoneNumber())) {
+                MenuOption menuOption = menuLevel.getMenuOptions().get(0);
+                return processMenuOption(session, menuOption);
+            }
+            else {
+                System.out.println("PIN not matched");
+            }
+        }
         if (Integer.parseInt(lastValue) <= menuLevel.getMaxSelections()) {
             MenuOption menuOption = menuLevel.getMenuOptions().get(Integer.parseInt(lastValue) - 1);
             return processMenuOption(session, menuOption);
@@ -76,17 +93,18 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
             UssdSession ussdSession = this.ussdSessionRepository.findBySessionId(session.getSessionId());
             UserData userData = userRepository.findByPhoneNo(ussdSession.getPhoneNumber());
             switch (menuOption.getAction()) {
-                case PROCESS_ACC_BALANCE:
-                    variablesMap.put("account_balance", "10000");
+                case PROCESS_SAVE_UIN:
+                    String lastValue = splitAndGetLastInput(session);
+                    System.out.println("#####" + "\n" + lastValue);
+                    UserData userData1 = new UserData(lastValue, session.getPhoneNumber(), null);
+                    userRepository.save(userData1);
                     break;
-                case PROCESS_ACC_NUMBER:
-                    variablesMap.put("account_number", "123412512");
+                case PROCESS_GENERATE_VID:
+                    String vid = userService.generateVid(session.getPhoneNumber());
+                    variablesMap.put("VID", vid);
                     break;
-                case PROCESS_ACC_PHONE_NUMBER:
-                    variablesMap.put("phone_number", ussdSession.getPhoneNumber());
-                    break;
-                case PROCESS_ACC_AADHAR:
-                    variablesMap.put("aadhar_number", userData.getAadharNo());
+                case PROCESS_ACC_UIN:
+                    variablesMap.put("UIN", userData.getAadharNo());
             }
 
             response = replaceVariable(variablesMap, response);
@@ -123,5 +141,9 @@ public class UssdRoutingServiceImpl implements UssdRoutingService {
         session.setText(text);
 
         return sessionService.createUssdSession(session);
+    }
+    private String splitAndGetLastInput(UssdSession session){
+        String[] levels = session.getText().split("\\*");
+        return levels[levels.length - 1];
     }
 }

@@ -2,41 +2,55 @@
   "1": {
     "id": 230,
     "menu_level": 1,
-    "text": "CON What would you like to check\n1. Aadhar number\n2. My phone number",
+    "text": "CON What would you like to do?\n1. Configure UIN \n2. View UIN \n3. Get VID",
     "menu_options": [
       {
-        "type": "response",
-        "response": "END Your Aadhar no. is ${aadhar_number}",
-        "next_menu_level": null,
-        "action": "PROCESS_ACC_AADHAR"
+        "type": "level",
+        "response": "CON ",
+        "next_menu_level": 2,
+        "action": "PROCESS_GET_UIN"
       },
       {
         "type": "response",
-        "response": "END Your Phone Number is ${phone_number}",
+        "response": "END Your UIN no. is ${UIN}",
         "next_menu_level": null,
-        "action": "PROCESS_ACC_PHONE_NUMBER"
+        "action": "PROCESS_ACC_UIN"
+      },
+      {
+        "type": "level",
+        "response": "CON ",
+        "next_menu_level": 3,
+        "action": "PROCESS_GET_VID"
       }
     ],
     "max_selections": 3
   },
   "2": {
-    "id": 230,
+    "id": 231,
     "menu_level": 2,
-    "text": "CON Choose account information you want to view\n1. Account number\n2. Account balance",
+    "text": "CON Enter your UIN.",
     "menu_options": [
       {
         "type": "response",
-        "response": "END Your account number is ${account_number}",
+        "response": "END Your UIN successfully registered.",
         "next_menu_level": null,
-        "action": "PROCESS_ACC_NUMBER"
-      },
-      {
-        "type": "response",
-        "response": "END Your Account balance is ${account_balance}",
-        "next_menu_level": null,
-        "action": "PROCESS_ACC_BALANCE"
+        "action": "PROCESS_SAVE_UIN"
       }
     ],
-    "max_selections": 3
+    "max_selections": 1
+  },
+  "3": {
+    "id": 232,
+    "menu_level": 3,
+    "text": "CON Enter Last 4 digits of your UIN",
+    "menu_options": [
+      {
+        "type": "response",
+        "response": "END Your VID is ${VID}",
+        "next_menu_level": null,
+        "action": "PROCESS_GENERATE_VID"
+      }
+    ],
+    "max_selections": 1
   }
 }
