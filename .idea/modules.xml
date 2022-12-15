@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/USSD_API/USSD_API.iml" filepath="$PROJECT_DIR$/USSD_API/USSD_API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/USSD_SERVICE.iml" filepath="$PROJECT_DIR$/.idea/USSD_SERVICE.iml" />
+    </modules>
+  </component>
+</project>
